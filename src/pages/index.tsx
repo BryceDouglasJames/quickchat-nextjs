@@ -1,6 +1,29 @@
 import { trpc } from '../utils/trpc';
 import { NextPageWithLayout } from './_app';
+import { useForm, UseFormProps } from 'react-hook-form';
 import Link from 'next/link';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+export const validationschema = z.object({
+  title: z.string().min(1),
+  text: z.string().min(1),
+});
+
+function useZodForm<TSchema extends z.ZodType>(
+  props: Omit<UseFormProps<TSchema['_input']>, 'resolver'> & {
+    schema: TSchema;
+  },
+) {
+  const form = useForm<TSchema['_input']>({
+    ...props,
+    resolver: zodResolver(props.schema, undefined, {
+      rawValues: true,
+    }),
+  });
+
+  return form;
+}
 
 const IndexPage: NextPageWithLayout = () => {
   const utils = trpc.useContext();
@@ -12,22 +35,17 @@ const IndexPage: NextPageWithLayout = () => {
     },
   });
 
-  // prefetch all posts for instant navigation
-  // useEffect(() => {
-  //   for (const { id } of postsQuery.data ?? []) {
-  //     utils.prefetchQuery(['post.byId', { id }]);
-  //   }
-  // }, [postsQuery.data, utils]);
+  const formhandle = useZodForm({
+    schema: validationschema,
+    defaultValues: {
+      title: '...',
+      text: '...',
+    },
+  });
 
   return (
     <>
-      <h1>Welcome to your tRPC starter!</h1>
-      <p>
-        Check <a href="https://trpc.io/docs">the docs</a> whenever you get
-        stuck, or ping <a href="https://twitter.com/alexdotjs">@alexdotjs</a> on
-        Twitter.
-      </p>
-
+      <h1>tRPC starter!</h1>
       <h2>
         Posts
         {postsQuery.status === 'loading' && '(loading)'}
@@ -44,41 +62,26 @@ const IndexPage: NextPageWithLayout = () => {
       <hr />
 
       <form
-        onSubmit={async (e) => {
-          e.preventDefault();
-          /**
-           * In a real app you probably don't want to use this manually
-           * Checkout React Hook Form - it works great with tRPC
-           * @link https://react-hook-form.com/
-           */
-
-          const $text: HTMLInputElement = (e as any).target.elements.text;
-          const $title: HTMLInputElement = (e as any).target.elements.title;
-          const input = {
-            title: $title.value,
-            text: $text.value,
-          };
-          try {
-            await addPost.mutateAsync(input);
-
-            $title.value = '';
-            $text.value = '';
-          } catch {}
-        }}
+        onSubmit={formhandle.handleSubmit(async (vals) => {
+          await addPost.mutateAsync(vals);
+          formhandle.reset();
+        })}
       >
         <label htmlFor="title">Title:</label>
         <br />
         <input
-          id="title"
-          name="title"
           type="text"
+          {...formhandle.register('title')}
           disabled={addPost.isLoading}
         />
-
         <br />
         <label htmlFor="text">Text:</label>
         <br />
-        <textarea id="text" name="text" disabled={addPost.isLoading} />
+        <input
+          type="text"
+          {...formhandle.register('text')}
+          disabled={addPost.isLoading}
+        />
         <br />
         <input type="submit" disabled={addPost.isLoading} />
         {addPost.error && (

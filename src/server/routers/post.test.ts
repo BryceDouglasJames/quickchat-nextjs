@@ -1,6 +1,3 @@
-/**
- * Integration test example for the `post` router
- */
 import { createContextInner } from '../context';
 import { appRouter } from './_app';
 import { inferMutationInput } from '~/utils/trpc';
