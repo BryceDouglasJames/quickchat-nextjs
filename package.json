@@ -21,7 +21,7 @@
     "test:unit": "jest",
     "test:e2e": "playwright test",
     "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\"",
-    "postinstall": "prisma generate"
+    "update-client-types": "prisma generate"
   },
   "prisma": {
     "seed": "yarn ts-node prisma/seed.ts"

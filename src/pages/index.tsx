@@ -46,6 +46,11 @@ const IndexPage: NextPageWithLayout = () => {
   return (
     <>
       <h1>tRPC starter!</h1>
+
+      <Link href={'/chat/TEST'}>
+        <a>See all user post</a>
+      </Link>
+
       <h2>
         Posts
         {postsQuery.status === 'loading' && '(loading)'}

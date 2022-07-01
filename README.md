@@ -1,7 +1,7 @@
 # Test chat application using Prisma + tRPC
-# Project template provided by tRPC example created by [@alexdotjs](https://twitter.com/alexdotjs).
+# Project template example created by [@alexdotjs](https://twitter.com/alexdotjs).
 
-**This is really meant to teach me modern framework architecture and testing applications. Not to mention RPC seems pretty cool so here we are :p The final goal is to build an optimized real time chat app;ication and learn more best practices.**
+**This is really meant to teach me modern framework architecture and testing applications. Not to mention RPC seems pretty cool so here we are :p The final goal is to build an optimized real time chat application and learn more best practices.**
 ## Setup
 
 **yarn:**
